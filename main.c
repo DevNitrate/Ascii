@@ -127,6 +127,7 @@ Pixel** imgToPixels(const char* filename, int* x, int* y) {
 
     if (data == NULL) {
         printf("Something went wrong while loading png");
+        exit(1);
     }
 
     *x = width;
@@ -217,7 +218,7 @@ float** toGrayscale(Pixel** pixs, int x, int y) {
 }
 
 char** toAscii(float** grey, int x, int y) {
-    const char* steps = " .:coPO?#@";
+    const char* steps = " `.:*/oO#@";
 
     char** ascii = (char**)malloc(y * sizeof(char*));
     for (int i = 0; i < y; i++) {
@@ -247,14 +248,10 @@ char* asciiToBuf(char** ascii, int x, int y) {
             res[count] = c;
             res[count+1] = c;
 
-            /*printf("%c", c);
-            printf("%c", c);*/
-
             count += 2;
         }
         res[count] = '\n';
         count++;
-        //printf("\n");
     }
 
     return res;
@@ -264,6 +261,7 @@ void outputFile(char* buf, const char* filename, int use) {
     if (use) {
         FILE* out = fopen(filename, "w");
         fprintf(out, buf);
+        
     } else {
         printf("note: no output file was selected");
     }
@@ -277,7 +275,7 @@ void copyBuf(char* str) {
     HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
     if (hMem == NULL) {
         fprintf(stderr, "GlobalAlloc failed\n");
-        return;
+        exit(1);
     }
 
     // Copy the string to the allocated memory
@@ -288,7 +286,7 @@ void copyBuf(char* str) {
     if (!OpenClipboard(NULL)) {
         fprintf(stderr, "OpenClipboard failed\n");
         GlobalFree(hMem);
-        return;
+        exit(1);
     }
 
     // Empty the clipboard
@@ -299,7 +297,7 @@ void copyBuf(char* str) {
         fprintf(stderr, "SetClipboardData failed\n");
         GlobalFree(hMem);
         CloseClipboard();
-        return;
+        exit(1);
     }
 
     // Close the clipboard
